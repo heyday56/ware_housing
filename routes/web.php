@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\SalesItemController;
@@ -10,8 +11,13 @@ use App\Http\Controllers\ProductController;
 
 
 
-Route::get('/', function () {
-    return view('welcome');
+
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+])->group(function () {
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 });
 
 Route::middleware([
@@ -19,9 +25,7 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
 // Products Routes
@@ -39,7 +43,7 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/product/add', [ProductController::class, 'insert'])->name('products.insert');
+    Route::get('/product/add', [ProductController::class, 'insert'])->name('product.create');
 });
 
 Route::middleware([
